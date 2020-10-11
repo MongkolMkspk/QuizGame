@@ -100,6 +100,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(buttonText.equals(mAnswerWord)){
             Toast.makeText(GameActivity.this,"ถูกต้องครับ",Toast.LENGTH_SHORT).show();
             score++;
+            String str = String.valueOf(score+" คะแนน");
+            scoreTextView.setText(str);
             /*new AlertDialog.Builder(GameActivity.this)
                     .setTitle("Answer")
                     .setMessage("Correct")
@@ -122,7 +124,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             dialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    score = 0;
+                    score=0;
+                    newQuiz();
                 }
             });
             dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -134,6 +137,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             });
             dialog.show();
         }
-        newQuiz();
+        else{
+            newQuiz();
+        }
     }
 }
