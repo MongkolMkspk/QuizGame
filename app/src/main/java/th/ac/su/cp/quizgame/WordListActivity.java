@@ -19,10 +19,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import th.ac.su.cp.quizgame.model.WordItem;
 
 public class WordListActivity extends AppCompatActivity {
 
+    static public WordItem[] items = {
+            new WordItem(R.drawable.cat, "CAT"),
+            new WordItem(R.drawable.dog, "DOG"),
+            new WordItem(R.drawable.dolphin, "DOLPHIN"),
+            new WordItem(R.drawable.koala, "KOALA"),
+            new WordItem(R.drawable.lion, "LION"),
+            new WordItem(R.drawable.owl, "OWL"),
+            new WordItem(R.drawable.penguin, "PENGUIN"),
+            new WordItem(R.drawable.pig, "PIG"),
+            new WordItem(R.drawable.rabbit, "RABBIT"),
+            new WordItem(R.drawable.tiger, "TIGER")
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,8 +48,10 @@ public class WordListActivity extends AppCompatActivity {
 
         //สร้าง Layout manager
         LinearLayoutManager lm = new LinearLayoutManager(WordListActivity.this);
+
+        List<WordItem> wordList = Arrays.asList(items);
         //สร้าง adapter object
-        MyAdapter adapter = new MyAdapter(WordListActivity.this);
+        MyAdapter adapter = new MyAdapter(WordListActivity.this,wordList);
 
         //เข้าถึง RecycleView ใน Layout
         RecyclerView rv = findViewById(R.id.word_list_recycler_view);
@@ -45,22 +65,12 @@ public class WordListActivity extends AppCompatActivity {
 class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     final Context mContext;
+    final List<WordItem> mWordList;
 
-    WordItem[] items = {
-            new WordItem(R.drawable.cat, "CAT"),
-            new WordItem(R.drawable.dog, "DOG"),
-            new WordItem(R.drawable.dolphin, "DOLPHIN"),
-            new WordItem(R.drawable.koala, "KOALA"),
-            new WordItem(R.drawable.lion, "LION"),
-            new WordItem(R.drawable.owl, "OWL"),
-            new WordItem(R.drawable.penguin, "PENGUIN"),
-            new WordItem(R.drawable.pig, "PIG"),
-            new WordItem(R.drawable.rabbit, "RABBIT"),
-            new WordItem(R.drawable.tiger, "TIGER")
-    };
+    public MyAdapter(Context context,List<WordItem> wordList) {
 
-    public MyAdapter(Context context) {
         this.mContext = context;
+        this.mWordList = wordList;
     }
 
     @NonNull
@@ -74,15 +84,15 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override//holder รับ vh
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        holder.imageView.setImageResource(items[position].imageResId);
-        holder.wordTextView.setText(items[position].word);
-        holder.item = items[position];
+        holder.imageView.setImageResource(mWordList.get(position).imageResId);
+        holder.wordTextView.setText(mWordList.get(position).word);
+        holder.item = mWordList.get(position);
 
     }
 
     @Override
     public int getItemCount() {
-        return items.length;//จำนวนครั้งการเตรียมแสดง item (บอกว่ามีไอเทมทั้งหมดกี่ชิ้น)
+        return mWordList.size();//จำนวนครั้งการเตรียมแสดง item (บอกว่ามีไอเทมทั้งหมดกี่ชิ้น)
     }
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -103,6 +113,12 @@ class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     Toast.makeText(context, item.word, Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(context,WordDetailsActivity.class);
+                    /*intent.putExtra("word",item.word);
+                    intent.putExtra("image",item.imageResId);*/
+
+                    String itemJson = new Gson().toJson(item);//Json is String can reduce "intent.putExtra"
+                    intent.putExtra("item",itemJson);
+
                     context.startActivity(intent);
 
                     /*AlertDialog.Builder dialog = new AlertDialog.Builder(context);
